@@ -12,6 +12,11 @@ def deployer(accounts):
 
 
 @pytest.fixture(scope="module")
+def keeper(accounts):
+    yield accounts.at("0xF8dbb94608E72A3C4cEeAB4ad495ac51210a341e", force=True)
+
+
+@pytest.fixture(scope="module")
 def wbtc_whale(accounts):
     yield accounts.at("0x070f5A78963a658d3b8700BAF8e3C08984514eA2", force=True)
 
@@ -49,6 +54,7 @@ def bcrvTBTC(interface):
 @pytest.fixture(scope="module")
 def tokenProcessor(
     TokenProcessor,
+    keeper,
     bcrvRenBTC,
     bcrvSBTC,
     bcrvTBTC,
@@ -57,7 +63,7 @@ def tokenProcessor(
     wbtc_whale,
     governance,
 ):
-    processor = deployer.deploy(TokenProcessor)
+    processor = deployer.deploy(TokenProcessor, keeper)
 
     # send some for testing
     amount_sent = 1 * 10 ** 8
